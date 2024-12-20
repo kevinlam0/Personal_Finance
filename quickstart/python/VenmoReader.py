@@ -2,6 +2,9 @@ import psycopg2
 import os
 from dotenv import load_dotenv
 import DatabaseDriver
+import pandas as pd
+from math import isnan
+
 
 load_dotenv()
 # Database configs
@@ -23,6 +26,33 @@ TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS VenmoTransaction(
                         )"""
 
 
+def find_columns(df: pd.DataFrame, max_rows_to_search = 5):
+    count_col = 0
+    indices = {"id": None, "datetime": None, "note": None, "from": None, "to": None, "amount (total)": None} #id, datetime, note, from, to, amount
+    count_row = 0
+    
+    # Iterate through the rows of the df
+    for i, row in df.iterrows():
+        # Iterate through the columns of the row
+        for col_i, val in enumerate(row):
+            try:
+                if val.lower() in indices:
+                    indices[val.lower()] = col_i
+                    count_col += 1
+            
+            except AttributeError: # val can be NaN, so it raises this error during val.lower()
+                continue
+            
+        # If we found all columns needed, return
+        if count_col == len(indices):
+            return indices, count_row
+        # Iterate row counter to make sure we don't search too many rows
+        count_row += 1
+        if count_row == max_rows_to_search:
+            break
+    raise Exception("Error finding column indicies: did not find all indicies before max rows to search")
+    
+    
 class VenmoReader():
     
     def __init__(self):
@@ -48,5 +78,28 @@ class VenmoReader():
         finally:
             cur.close()
             conn.close()
+            
+    
+            
+    def clean_data(self, directory: str):
+        paths: list[str] = os.listdir(directory)
+        found = False
+         
+        if paths[0].endswith(".csv"):
+            df = pd.read_csv(f"{directory}/{paths[0]}")
+            # for index, row in df.iterrows():
+            # for col in df.columns:
+            #     print(col)
+            indices, last_row = find_columns(df)
+            print("Indices", indices)
+            print("Last row", last_row)
+        return
+        for file in paths:
+            if not file.endswith(".csv"): continue
+    
+    
         
-        
+if __name__ == '__main__':
+       vr = VenmoReader()
+       dir_path = "../../../Finance_Tracker/venmoData"
+       vr.clean_data(dir_path)
