@@ -82,17 +82,20 @@ class VenmoReader():
     
             
     def clean_data(self, directory: str):
+        """ Gets rid of the rows and columns that are not needed in the raw Venmo CSV exports and create new csv files
+
+        Args:
+            directory (str): directory must contain .csv files that only pertain to the Venmo export formats
+        """
+        
         paths: list[str] = os.listdir(directory)
-        found = False
-         
-        if paths[0].endswith(".csv"):
-            df = pd.read_csv(f"{directory}/{paths[0]}")
-            # for index, row in df.iterrows():
-            # for col in df.columns:
-            #     print(col)
-            indices, last_row = find_columns(df)
-            print("Indices", indices)
-            print("Last row", last_row)
+        for file in paths:
+            if not file.endswith(".csv"): continue
+            
+            df = pd.read_csv(f"{directory}/{file}")
+            col_indices, last_row = find_columns(df)
+            
+            
         return
         for file in paths:
             if not file.endswith(".csv"): continue
