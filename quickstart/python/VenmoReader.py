@@ -11,16 +11,21 @@ DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
 DATABASE_PORT = os.getenv('DATABASE_PORT')
 
 TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS VenmoTransaction(
-                        id SERIAL PRIMARY KEY,
+                        transaction_id SERIAL PRIMARY KEY,
                         from VARCHAR(30) NOT NULL,
                         to VARCHAR(30) NOT NULL,
                         note VARCHAR(80) NOT NULL,
                         amount DECIMAL(12,2) NOT NULL,
                         date TIMESTAMP NOT NULL,
-                        ))"""
+                        category_id INT,
+                        CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES Category(category_id)
+                        )"""
 
 
 class VenmoReader():
+    
+    def __init__(self):
+        pass
 
     def connect(self):
         return psycopg2.connect(
@@ -33,5 +38,9 @@ class VenmoReader():
     def create_tables(self):
         conn = self.connect()
         cur = conn.cursor()
+        cur.execute(TABLE_CREATION_SQL)
+        conn.commit()
+        cur.close()
+        conn.close()
         
         
