@@ -1,6 +1,7 @@
 import psycopg2
 import os
 from dotenv import load_dotenv
+import sys
 
 load_dotenv()
 # Database configs
@@ -10,7 +11,7 @@ DATABASE_HOST = os.getenv('DATABASE_HOST')
 DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
 DATABASE_PORT = os.getenv('DATABASE_PORT')
 
-USER_TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS [User] (
+USER_TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS Users (
                             user_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                             first_name VARCHAR(15),
                             last_name VARCHAR(15)
@@ -19,8 +20,8 @@ USER_TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS [User] (
 CATEGORY_TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS Category (
                                 category_id SERIAL PRIMARY KEY,
                                 label VARCHAR(20) NOT NULL,
-                                [user_id] BIGINT
-                                CONSTRAINT fk_user_category FOREIGN KEY(user_id) REFERENCES [User](user_id)
+                                user_id BIGINT,
+                                CONSTRAINT fk_user_category FOREIGN KEY(user_id) REFERENCES Users(user_id)
                                 )"""
                 
 def print_psycopg2_exception(err):
@@ -40,15 +41,16 @@ def print_psycopg2_exception(err):
     print ("pgerror:", err.pgerror)
     print ("pgcode:", err.pgcode, "\n")
     
-    
-    
-def create_tables():
-    conn = psycopg2.connect(
+def connect():
+    return psycopg2.connect(
             database = DATABASE_NAME, 
             user = DATABASE_USER, 
             host = DATABASE_HOST, 
             password = DATABASE_PASSWORD, 
             port = DATABASE_PORT)
+    
+def create_tables():
+    conn = connect()
     curs = conn.cursor()
     try:
         curs.execute(USER_TABLE_CREATION_SQL)

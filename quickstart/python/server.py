@@ -62,6 +62,8 @@ from plaid.model.cra_check_report_partner_insights_get_request import CraCheckRe
 from plaid.model.cra_pdf_add_ons import CraPDFAddOns
 from plaid.api import plaid_api
 
+import DatabaseDriver
+import VenmoReader
 load_dotenv()
 
 
@@ -747,3 +749,8 @@ def format_error(e):
 
 if __name__ == '__main__':
     app.run(port=int(os.getenv('PORT', 8000)))
+    # DatabaseDriver.create_tables()
+    # vr = VenmoReader.VenmoReader()
+    # vr.create_tables()
+    
+    
