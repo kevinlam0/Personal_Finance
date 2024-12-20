@@ -1,6 +1,7 @@
 import psycopg2
 import os
 from dotenv import load_dotenv
+import DatabaseDriver
 
 load_dotenv()
 # Database configs
@@ -12,8 +13,8 @@ DATABASE_PORT = os.getenv('DATABASE_PORT')
 
 TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS VenmoTransaction(
                         transaction_id SERIAL PRIMARY KEY,
-                        from VARCHAR(30) NOT NULL,
-                        to VARCHAR(30) NOT NULL,
+                        sender VARCHAR(30) NOT NULL,
+                        recipient VARCHAR(30) NOT NULL,
                         note VARCHAR(80) NOT NULL,
                         amount DECIMAL(12,2) NOT NULL,
                         date TIMESTAMP NOT NULL,
@@ -38,9 +39,14 @@ class VenmoReader():
     def create_tables(self):
         conn = self.connect()
         cur = conn.cursor()
-        cur.execute(TABLE_CREATION_SQL)
-        conn.commit()
-        cur.close()
-        conn.close()
+        try:
+            cur.execute(TABLE_CREATION_SQL)
+            conn.commit()
+        except Exception as e:
+            DatabaseDriver.print_psycopg2_exception(e)
+            conn.rollback()
+        finally:
+            cur.close()
+            conn.close()
         
         
