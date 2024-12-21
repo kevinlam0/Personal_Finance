@@ -12,18 +12,22 @@ DATABASE_HOST = os.getenv('DATABASE_HOST')
 DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
 DATABASE_PORT = os.getenv('DATABASE_PORT')
 
-USER_TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS Users (
-                            user_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-                            first_name VARCHAR(15),
-                            last_name VARCHAR(15)
-                            )"""
+USER_TABLE_CREATION_SQL = """
+    CREATE TABLE IF NOT EXISTS Users (
+        user_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+        first_name VARCHAR(15),
+        last_name VARCHAR(15)
+    )
+"""
 
-CATEGORY_TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS Category (
-                                category_id SERIAL PRIMARY KEY,
-                                label VARCHAR(20) NOT NULL,
-                                user_id BIGINT,
-                                CONSTRAINT fk_user_category FOREIGN KEY(user_id) REFERENCES Users(user_id)
-                                )"""
+CATEGORY_TABLE_CREATION_SQL = """
+    CREATE TABLE IF NOT EXISTS Category (
+        category_id SERIAL PRIMARY KEY,
+        label VARCHAR(20) NOT NULL,
+        user_id BIGINT,
+        CONSTRAINT fk_user_category FOREIGN KEY(user_id) REFERENCES Users(user_id)
+    )
+"""
                 
 def print_psycopg2_exception(err):
     # get details about the exception

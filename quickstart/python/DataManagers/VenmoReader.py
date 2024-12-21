@@ -6,18 +6,19 @@ import re
 
 TABLE_CREATION_SQL = """
     CREATE TABLE IF NOT EXISTS VenmoTransaction(
-    user_id BIGINT
-    transaction_id BIGINT,
-    sender VARCHAR(30) NOT NULL,
-    recipient VARCHAR(30) NOT NULL,
-    note TEXT NOT NULL,
-    amount DECIMAL(12,2) NOT NULL,
-    date_time TIMESTAMP NOT NULL,
-    category_id INT,
-    CONSTRAINT fk_userid FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES Category(category_id),
-    PRIMARY KEY (user_id, transaction_id)
-)"""
+        user_id BIGINT
+        transaction_id BIGINT,
+        sender VARCHAR(30) NOT NULL,
+        recipient VARCHAR(30) NOT NULL,
+        note TEXT NOT NULL,
+        amount DECIMAL(12,2) NOT NULL,
+        date_time TIMESTAMP NOT NULL,
+        category_id INT,
+        CONSTRAINT fk_userid FOREIGN KEY (user_id) REFERENCES Users(user_id),
+        CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES Category(category_id),
+        PRIMARY KEY (user_id, transaction_id)
+    )
+"""
 
 def create_table(conn):
     cur = conn.cursor()
