@@ -29,7 +29,6 @@ TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS VenmoTransaction(
 def find_columns(df: pd.DataFrame, max_rows_to_search = 5):
     count_col = 0
     indices = {"id": None, "datetime": None, "note": None, "from": None, "to": None, "amount (total)": None} #id, datetime, note, from, to, amount
-    count_row = 0
     
     # Iterate through the rows of the df
     for i, row in df.iterrows():
@@ -45,10 +44,9 @@ def find_columns(df: pd.DataFrame, max_rows_to_search = 5):
             
         # If we found all columns needed, return
         if count_col == len(indices):
-            return indices, count_row
+            return indices
         # Iterate row counter to make sure we don't search too many rows
-        count_row += 1
-        if count_row == max_rows_to_search:
+        if i == max_rows_to_search:
             break
     raise Exception("Error finding column indicies: did not find all indicies before max rows to search")
     
@@ -92,14 +90,20 @@ class VenmoReader():
         for file in paths:
             if not file.endswith(".csv"): continue
             
-            df = pd.read_csv(f"{directory}/{file}")
-            col_indices, last_row = find_columns(df)
+            # Dropping unwanted column and rows
+            df = pd.read_csv(f"{directory}/{file}", header=None)
+            col_indices = find_columns(df)
+            df = df.dropna(subset=[df.columns[col_indices["from"]]]).reset_index(drop=True)
+            df = df.iloc[:, list(col_indices.values())]
             
+            # Making column header
+            df.columns = df.iloc[0]
+            df.drop(0, axis=0, inplace=True)
             
-        return
-        for file in paths:
-            if not file.endswith(".csv"): continue
-    
+            # File naming
+            year_start = file.index("2")
+            file_name = f"{file[year_start:year_start+4]}{file[5:year_start]}.csv"
+            df.to_csv(file_name, index = False)
     
         
 if __name__ == '__main__':
