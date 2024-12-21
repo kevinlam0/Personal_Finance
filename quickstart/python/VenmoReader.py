@@ -17,7 +17,7 @@ TABLE_CREATION_SQL = """CREATE TABLE IF NOT EXISTS VenmoTransaction(
                         transaction_id SERIAL PRIMARY KEY,
                         sender VARCHAR(30) NOT NULL,
                         recipient VARCHAR(30) NOT NULL,
-                        note VARCHAR(80) NOT NULL,
+                        note TEXT NOT NULL,
                         amount DECIMAL(12,2) NOT NULL,
                         date TIMESTAMP NOT NULL,
                         category_id INT,
@@ -90,13 +90,15 @@ class VenmoReader():
 
         for file in paths:
             if not file.endswith(".csv"): continue
-            if not file.startswith("2024") and not file.startswith("2024Oct") and not file.startswith("2024Nov") and not file.startswith("2024Dec"): continue
             
             # Dropping unwanted column and rows
             df = pd.read_csv(f"{src_dir}/{file}", header=None)
             col_indices = find_columns(df)
             df = df.dropna(subset=[df.columns[col_indices["from"]]]).reset_index(drop=True)
             df = df.iloc[:, list(col_indices.values())]
+            # Cleaning currency
+            df = df.rename(columns={'Amount (total)': 'Amount'}, errors='raise')
+            df['Amount'] = df['Amount'].str.replace(r'[^\d.-]', '', regex=True)
             
             # Making column header
             df.columns = df.iloc[0]
@@ -113,10 +115,10 @@ class VenmoReader():
             file_name = f"{year_match.group(0)}{month_match.group(0)}_cleanVenmo.csv"
             file_path = os.path.join(dest_dir, file_name)
             df.to_csv(file_path, index = False)
-    
+             
         
 if __name__ == '__main__':
        vr = VenmoReader()
-       dir_path = "../../../dirty_venmo_data"
-       dest_path = "../../../clean_venmo_data"
-       vr.clean_data(dir_path, dest_path)
+       dir_path = "../../../clean_venmo_data"
+       dest_path = "../../../cleaner_venmo_data"
+       vr.clean_currency(dir_path, dest_path)
