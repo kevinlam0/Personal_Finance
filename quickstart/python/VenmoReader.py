@@ -3,8 +3,7 @@ import os
 from dotenv import load_dotenv
 import DatabaseDriver
 import pandas as pd
-from math import isnan
-
+import re
 
 load_dotenv()
 # Database configs
@@ -79,19 +78,22 @@ class VenmoReader():
             
     
             
-    def clean_data(self, directory: str):
+    def clean_data(self, src_dir: str, dest_dir: str):
         """ Gets rid of the rows and columns that are not needed in the raw Venmo CSV exports and create new csv files
 
         Args:
             directory (str): directory must contain .csv files that only pertain to the Venmo export formats
         """
+        os.makedirs(dest_dir, exist_ok=True)
         
-        paths: list[str] = os.listdir(directory)
+        paths: list[str] = os.listdir(src_dir)
+
         for file in paths:
             if not file.endswith(".csv"): continue
+            if not file.startswith("2024") and not file.startswith("2024Oct") and not file.startswith("2024Nov") and not file.startswith("2024Dec"): continue
             
             # Dropping unwanted column and rows
-            df = pd.read_csv(f"{directory}/{file}", header=None)
+            df = pd.read_csv(f"{src_dir}/{file}", header=None)
             col_indices = find_columns(df)
             df = df.dropna(subset=[df.columns[col_indices["from"]]]).reset_index(drop=True)
             df = df.iloc[:, list(col_indices.values())]
@@ -101,12 +103,20 @@ class VenmoReader():
             df.drop(0, axis=0, inplace=True)
             
             # File naming
-            year_start = file.index("2")
-            file_name = f"{file[year_start:year_start+4]}{file[5:year_start]}.csv"
-            df.to_csv(file_name, index = False)
+            year_match = re.search(r"(19|20)\d{2}", file)
+            month_match = re.search(r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)", file, re.IGNORECASE)
+            
+            if not year_match or not month_match:
+                print("Did not find file naming dates")
+                return
+            
+            file_name = f"{year_match.group(0)}{month_match.group(0)}_cleanVenmo.csv"
+            file_path = os.path.join(dest_dir, file_name)
+            df.to_csv(file_path, index = False)
     
         
 if __name__ == '__main__':
        vr = VenmoReader()
-       dir_path = "../../../Finance_Tracker/venmoData"
-       vr.clean_data(dir_path)
+       dir_path = "../../../dirty_venmo_data"
+       dest_path = "../../../clean_venmo_data"
+       vr.clean_data(dir_path, dest_path)
