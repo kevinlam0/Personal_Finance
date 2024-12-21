@@ -2,6 +2,7 @@ import psycopg2
 import os
 from dotenv import load_dotenv
 import sys
+import VenmoReader
 
 load_dotenv()
 # Database configs
@@ -55,6 +56,7 @@ def create_tables():
     try:
         curs.execute(USER_TABLE_CREATION_SQL)
         curs.execute(CATEGORY_TABLE_CREATION_SQL)
+        VenmoReader.create_table(conn)
         conn.commit()
     except Exception as e:
         print_psycopg2_exception(e)
@@ -63,4 +65,7 @@ def create_tables():
         curs.close()
         conn.close()
         
-    
+if __name__ == '__main__':
+    dir_path = "../../../clean_venmo_data"
+    dest_path = "../../../cleaner_venmo_data"
+    VenmoReader.clean_data(dir_path, dest_path)
