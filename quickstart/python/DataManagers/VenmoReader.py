@@ -119,16 +119,8 @@ def get_timed_transaction_data(year: int, month: int, src_dir: str) -> list:
     
     file_path = os.path.join(src_dir, wanted_file)
     df = pd.read_csv(file_path)
-    res = []
-    cols = df.columns.tolist()
-    for i, row in df.iterrows():
-        temp = {}
-        for j, val in row.items():
-            temp[j] = val
-        res.append(temp)
-    for row in res:
-        print(row)
-    return res
+    return df.to_dict(orient="records") # Turns each row into a dict stored in a list
+
     
         
         
