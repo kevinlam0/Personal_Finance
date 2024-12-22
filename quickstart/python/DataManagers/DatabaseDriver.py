@@ -1,4 +1,4 @@
-from psycopg2 import connect, OperationalError, errorcodes, errors
+from psycopg2 import connect
 from psycopg2 import Error as psyError
 from psycopg2.extensions import connection, cursor
 import os
