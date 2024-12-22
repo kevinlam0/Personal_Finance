@@ -1,4 +1,6 @@
-import psycopg2
+from psycopg2.extensions import connection, cursor
+from psycopg2 import Error as psyError
+import DatabaseDriver
 
 TOTAL_TABLE = """
     CREATE TABLE IF NOT EXISTS totals (
@@ -28,3 +30,16 @@ DATE_TOTALS = """
         PRIMARY KEY (user_id, year, month)
     )
     """
+
+def create_tables(conn: connection):
+    curs: cursor = conn.cursor()
+    try:
+        curs.execute(TOTAL_TABLE)
+        curs.execute(CATEGORY_TOTALS)
+        curs.execute(DATE_TOTALS)
+    except psyError as e:
+        DatabaseDriver.print_psycopg2_exception(e)
+        print("Error creating total tables")
+        raise psyError()
+    finally:
+        curs.close()

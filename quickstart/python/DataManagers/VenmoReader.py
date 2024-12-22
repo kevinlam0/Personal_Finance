@@ -1,4 +1,5 @@
-import psycopg2
+from psycopg2.extensions import connection, cursor
+from psycopg2 import Error as psyError
 import os
 import DatabaseDriver
 import pandas as pd
@@ -6,7 +7,7 @@ import re
 
 TABLE_CREATION_SQL = """
     CREATE TABLE IF NOT EXISTS VenmoTransaction(
-        user_id BIGINT
+        user_id BIGINT,
         transaction_id BIGINT,
         sender VARCHAR(30) NOT NULL,
         recipient VARCHAR(30) NOT NULL,
@@ -20,14 +21,15 @@ TABLE_CREATION_SQL = """
     )
 """
 
-def create_table(conn):
-    cur = conn.cursor()
+def create_table(conn: connection):
+    cur: cursor = conn.cursor()
     try:
         cur.execute(TABLE_CREATION_SQL)
         conn.commit()
-    except Exception as e:
+    except psyError as e:
         DatabaseDriver.print_psycopg2_exception(e)
-        conn.rollback()
+        print("Exception occurred creating Venmo table")
+        raise psyError()
     finally:
         cur.close()
 
@@ -58,7 +60,7 @@ def find_columns(df: pd.DataFrame, max_rows_to_search = 5):
         
 
         
-def clean_data(self, src_dir: str, dest_dir: str):
+def clean_data(src_dir: str, dest_dir: str):
     """ Gets rid of the rows and columns that are not needed in the raw Venmo CSV exports and create new csv files
 
     Args:

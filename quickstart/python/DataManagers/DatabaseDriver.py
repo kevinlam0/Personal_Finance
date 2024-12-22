@@ -1,8 +1,11 @@
-import psycopg2
+from psycopg2 import connect, OperationalError, errorcodes, errors
+from psycopg2 import Error as psyError
+from psycopg2.extensions import connection, cursor
 import os
 from dotenv import load_dotenv
 import sys
 import VenmoReader
+import Totals_DataDriver
 
 load_dotenv()
 # Database configs
@@ -29,7 +32,8 @@ CATEGORY_TABLE_CREATION_SQL = """
     )
 """
                 
-def print_psycopg2_exception(err):
+def print_psycopg2_exception(err: psyError):
+    if err.pgerror == None: return
     # get details about the exception
     err_type, err_obj, traceback = sys.exc_info()
 
@@ -46,23 +50,25 @@ def print_psycopg2_exception(err):
     print ("pgerror:", err.pgerror)
     print ("pgcode:", err.pgcode, "\n")
     
-def connect():
-    return psycopg2.connect(
-            database = DATABASE_NAME, 
+def this_connect() -> connection:
+    return connect(
+            dbname = DATABASE_NAME, 
             user = DATABASE_USER, 
             host = DATABASE_HOST, 
             password = DATABASE_PASSWORD, 
             port = DATABASE_PORT)
     
 def create_tables():
-    conn = connect()
-    curs = conn.cursor()
+    conn: connection = this_connect()
+    curs: cursor = conn.cursor()
     try:
         curs.execute(USER_TABLE_CREATION_SQL)
         curs.execute(CATEGORY_TABLE_CREATION_SQL)
         VenmoReader.create_table(conn)
+        Totals_DataDriver.create_tables(conn)
         conn.commit()
-    except Exception as e:
+        print("Successfully created all tables")
+    except psyError as e:
         print_psycopg2_exception(e)
         conn.rollback()
     finally:
@@ -70,6 +76,7 @@ def create_tables():
         conn.close()
         
 if __name__ == '__main__':
-    dir_path = "../../../clean_venmo_data"
-    dest_path = "../../../cleaner_venmo_data"
-    VenmoReader.clean_data(dir_path, dest_path)
+    # dir_path = "../../../clean_venmo_data"
+    # dest_path = "../../../cleaner_venmo_data"
+    # VenmoReader.clean_data(dir_path, dest_path)
+    create_tables()
