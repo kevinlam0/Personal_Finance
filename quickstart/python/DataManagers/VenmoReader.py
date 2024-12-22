@@ -87,7 +87,7 @@ def clean_data(src_dir: str, dest_dir: str):
         df.drop(0, axis=0, inplace=True)
         
         # File naming
-        year_match = re.search(r"(19|20)\d{2}", file)
+        year_match = re.search(r"(20)\d{2}", file)
         month_match = re.search(r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)", file, re.IGNORECASE)
         
         if not year_match or not month_match:
@@ -97,3 +97,30 @@ def clean_data(src_dir: str, dest_dir: str):
         file_name = f"{year_match.group(0)}{month_match.group(0)}_cleanVenmo.csv"
         file_path = os.path.join(dest_dir, file_name)
         df.to_csv(file_path, index = False)
+        
+def get_timed_transaction_data(year: int, month: int, src_dir: str) -> list:
+    # Input checking 
+    if not (1990 <= year <= 2100) or not (1 <= month <= 12):
+        raise ValueError("Year must be between 1990-2100 and Month must be between 1-12.")
+    
+    int_to_month = {
+        1: "jan", 2: "feb", 3: "mar", 4: "apr", 5: "may", 6: "jun", 
+        7: "jul", 8: "aug", 9: "sep", 10: "oct", 11: "nov", 12: "dec"
+    }
+    month_str = int_to_month[month]
+    
+    try:
+        wanted_file = next(
+            file for file in os.listdir(src_dir)
+            if str(year) in file and month_str in file.lower() and file.endswith(".csv")
+        )
+    except StopIteration:
+        raise FileNotFoundError("Could not find the timed file in the given directory.")
+    
+    file_path = os.path.join(src_dir, wanted_file)
+    df = pd.read_csv(file_path)
+    
+    return [df.columns.tolist()] + df.values.tolist()
+    
+        
+        

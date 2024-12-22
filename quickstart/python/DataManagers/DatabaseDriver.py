@@ -75,8 +75,12 @@ def create_tables():
         curs.close()
         conn.close()
         
+def get_venmo_transaction(month: int, year: int):
+    VenmoReader.get_timed_transaction_data(year, month, "../../../cleaner_venmo_data")
+        
 if __name__ == '__main__':
     # dir_path = "../../../clean_venmo_data"
     # dest_path = "../../../cleaner_venmo_data"
     # VenmoReader.clean_data(dir_path, dest_path)
-    create_tables()
+    # create_tables()
+    get_venmo_transaction(8, 2024)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 const serverUrl = "http://127.0.0.1:8000"
 const Transaction = () => {
     const [transactions, setTransactions] = useState([]);
