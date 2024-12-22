@@ -6,7 +6,7 @@ import json
 import time
 from datetime import date, timedelta
 import uuid
-
+from flask_cors import CORS
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 import plaid
@@ -61,13 +61,11 @@ from plaid.model.cra_check_report_income_insights_get_request import CraCheckRep
 from plaid.model.cra_check_report_partner_insights_get_request import CraCheckReportPartnerInsightsGetRequest
 from plaid.model.cra_pdf_add_ons import CraPDFAddOns
 from plaid.api import plaid_api
-
-import DatabaseDriver
-import VenmoReader
 load_dotenv()
 
 
 app = Flask(__name__)
+CORS(app)
 
 PLAID_CLIENT_ID = os.getenv('PLAID_CLIENT_ID')
 PLAID_SECRET = os.getenv('PLAID_SECRET')
@@ -131,6 +129,12 @@ transfer_id = None
 user_token = None
 
 item_id = None
+
+@app.route('/api/hello', methods=['GET'])
+def getHello():
+    return jsonify({
+        'key': "something"
+    })
 
 
 @app.route('/api/info', methods=['POST'])
@@ -749,8 +753,5 @@ def format_error(e):
 
 if __name__ == '__main__':
     app.run(port=int(os.getenv('PORT', 8000)))
-    # DatabaseDriver.create_tables()
-    # vr = VenmoReader.VenmoReader()
-    # vr.create_tables()
     
     

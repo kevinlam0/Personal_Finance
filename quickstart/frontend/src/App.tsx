@@ -3,6 +3,7 @@ import React, { useEffect, useContext, useCallback } from "react";
 import Header from "./Components/Headers";
 import Products from "./Components/ProductTypes/Products";
 import Items from "./Components/ProductTypes/Items";
+import Transaction from "./Components/Categorizing";
 import Context from "./Context";
 
 import styles from "./App.module.scss";
@@ -129,6 +130,7 @@ const App = () => {
             {!isPaymentInitiation && itemId && <Items />}
           </>
         )}
+        <Transaction/>
       </div>
     </div>
   );
