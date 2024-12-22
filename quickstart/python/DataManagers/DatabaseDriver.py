@@ -4,8 +4,8 @@ from psycopg2.extensions import connection, cursor
 import os
 from dotenv import load_dotenv
 import sys
-import VenmoReader
-import Totals_DataDriver
+from DataManagers import VenmoReader, Totals_DataDriver
+
 
 load_dotenv()
 # Database configs
@@ -76,11 +76,11 @@ def create_tables():
         conn.close()
         
 def get_venmo_transaction(month: int, year: int):
-    VenmoReader.get_timed_transaction_data(year, month, "../../../cleaner_venmo_data")
+    return VenmoReader.get_timed_transaction_data(year, month, "../../../cleaner_venmo_data")
         
 if __name__ == '__main__':
     # dir_path = "../../../clean_venmo_data"
     # dest_path = "../../../cleaner_venmo_data"
     # VenmoReader.clean_data(dir_path, dest_path)
     # create_tables()
-    get_venmo_transaction(8, 2024)
+    pass

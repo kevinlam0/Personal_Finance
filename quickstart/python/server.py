@@ -61,6 +61,8 @@ from plaid.model.cra_check_report_income_insights_get_request import CraCheckRep
 from plaid.model.cra_check_report_partner_insights_get_request import CraCheckReportPartnerInsightsGetRequest
 from plaid.model.cra_pdf_add_ons import CraPDFAddOns
 from plaid.api import plaid_api
+
+from DataManagers import DatabaseDriver
 load_dotenv()
 
 
@@ -132,9 +134,7 @@ item_id = None
 
 @app.route('/api/hello', methods=['GET'])
 def getHello():
-    return jsonify({
-        'key': "something"
-    })
+    return jsonify(DatabaseDriver.get_venmo_transaction(11, 2024))
 
 
 @app.route('/api/info', methods=['POST'])

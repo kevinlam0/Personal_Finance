@@ -1,6 +1,6 @@
 from psycopg2.extensions import connection, cursor
 from psycopg2 import Error as psyError
-import DatabaseDriver
+from . import DatabaseDriver
 
 TOTAL_TABLE = """
     CREATE TABLE IF NOT EXISTS totals (

@@ -1,7 +1,7 @@
 from psycopg2.extensions import connection, cursor
 from psycopg2 import Error as psyError
 import os
-import DatabaseDriver
+from . import DatabaseDriver
 import pandas as pd
 import re
 
@@ -119,8 +119,16 @@ def get_timed_transaction_data(year: int, month: int, src_dir: str) -> list:
     
     file_path = os.path.join(src_dir, wanted_file)
     df = pd.read_csv(file_path)
-    
-    return [df.columns.tolist()] + df.values.tolist()
+    res = []
+    cols = df.columns.tolist()
+    for i, row in df.iterrows():
+        temp = {}
+        for j, val in row.items():
+            temp[j] = val
+        res.append(temp)
+    for row in res:
+        print(row)
+    return res
     
         
         
