@@ -13,7 +13,7 @@ const Transaction = () => {
     const [transactions, setTransactions] = useState<Transaction[] | null>(null);
     const getData = async () => {
         console.log("Making a fetch call")
-        const response = await fetch(serverUrl + "/api/hello")
+        const response = await fetch("/api/hello", { method: "GET" })
         const data = await response.json()
         setTransactions(data)
     }
@@ -24,6 +24,7 @@ const Transaction = () => {
                 <ul>
                 {transactions.map(transaction => (
                     <li key={transaction.ID}>
+                    <p><strong>ID:</strong> {transaction.ID}</p>
                     <p><strong>Date:</strong> {transaction.Datetime}</p>
                     <p><strong>Note:</strong> {transaction.Note}</p>
                     <p><strong>From:</strong> {transaction.From}</p>
