@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { CreateCategories } from "./CreateCategories";
+import { create } from "domain";
 const serverUrl = "http://127.0.0.1:8000"
 
 type Transaction = {
@@ -12,6 +13,7 @@ type Transaction = {
 }
 const Transaction = () => {
     const [transactions, setTransactions] = useState<Transaction[] | null>(null);
+    const [createToggle, setCreateToggle] = useState<boolean>(false);
     const getData = async () => {
         console.log("Making a fetch call")
         const response = await fetch("/api/hello", { method: "GET" })
@@ -35,6 +37,10 @@ const Transaction = () => {
               secondParam: 'yourmom',
             })})
     }
+
+    const toggleCreate = () => {
+        setCreateToggle(!createToggle)
+    }
     return (
         <>
             <button onClick={getData}>Hello</button>
@@ -55,7 +61,8 @@ const Transaction = () => {
             )}
             <button onClick={getTransactionData}>Get transaction</button>
             <button onClick={runCategory}>Categorize</button>
-            <CreateCategories/>
+            <button onClick={toggleCreate}>{createToggle ? "Stop" : "Create custom categories"}</button>
+            {createToggle && <CreateCategories/>}
         </>
         )
     }

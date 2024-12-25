@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-
+import './index.scss';
 export const CreateCategories = () => {
   const [input, setInput] = useState<string>("");
   const [finishedInput, setFinishedInput] = useState<boolean>(true);
@@ -31,6 +31,7 @@ export const CreateCategories = () => {
 
   return (
     <div className="createContainer">
+      <h4>Enter your custom category:</h4>
       <input name="labelInput" value={input} onChange={handleChange}/>
       <button className="submit-btn" onClick={handleSubmit} disabled={input===""}>Submit</button>
       <button className="finished-btn" onClick={handleFinished} disabled={listOfInput.length < 1}>Finish</button>
