@@ -342,7 +342,7 @@ def get_transactions():
         while has_more:
             request = TransactionsSyncRequest(
                 # access_token=access_token,
-                access_token = access_token
+                access_token = access_token,
                 cursor=cursor,
             )
             response = client.transactions_sync(request).to_dict()
