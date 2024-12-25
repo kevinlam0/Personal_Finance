@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { CreateCategories } from "./CreateCategories";
 const serverUrl = "http://127.0.0.1:8000"
 
 type Transaction = {
@@ -54,6 +55,7 @@ const Transaction = () => {
             )}
             <button onClick={getTransactionData}>Get transaction</button>
             <button onClick={runCategory}>Categorize</button>
+            <CreateCategories/>
         </>
         )
     }

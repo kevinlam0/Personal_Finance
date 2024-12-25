@@ -82,6 +82,7 @@ def get_venmo_transaction(month: int, year: int):
 def create_categories(user_id: int, labels: list[str]):
     conn = this_connect()
     Categorizing.create_category(conn, user_id, labels)
+    conn.close()
     
 if __name__ == '__main__':
     # dir_path = "../../../clean_venmo_data"

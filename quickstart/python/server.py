@@ -729,11 +729,10 @@ def cra_partner_insights():
         return jsonify(error_response)
     
     
-@app.route('/api/create_category', methods=['POST'])
+@app.route('/api/create_categories', methods=['POST'])
 def create_category():
     request_data = request.get_json()
-    
-    DatabaseDriver.create_categories(36, request_data.labels)
+    DatabaseDriver.create_categories(36, request_data["labels"])
     return jsonify({"hello": []})
 
 # Since this quickstart does not support webhooks, this function can be used to poll
