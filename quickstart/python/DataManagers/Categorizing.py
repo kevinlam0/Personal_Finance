@@ -1,5 +1,6 @@
 from psycopg2.extensions import connection
 # Rules table which matches keyword to a category defined by the user
+### TAKE IN CONSIDERATION IF IT APPLIES TO A BANK OR NOT 
 RULES_SQL = """
     CREATE TABLE IF NOT EXISTS Categorizing_Rule (
         rule_id INT PRIMARY KEY,
@@ -8,6 +9,8 @@ RULES_SQL = """
         category_id INT NOT NULL REFERENCES Category(category_id) ON UPDATE CASCADE ON DELETE CASCADE
     )
     """
+    
+
     
 # Mapping for Plaid's auto-categorization to custom category
 CATEGORY_MAPPING = """

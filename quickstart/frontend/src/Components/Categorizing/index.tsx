@@ -26,6 +26,7 @@ const Transaction = () => {
     const runCategory = async () => {
         const response = await fetch("/api/create_category", {method: "POST",
             headers: {
+                'Accept': 'application/json',
                 "Content-Type": "application/json", // Specify content type
             },
             body: JSON.stringify({
