@@ -22,6 +22,17 @@ const Transaction = () => {
         const response = await fetch("/api/transaction", {method: "GET"})
         const data = await response.json()
     }
+
+    const runCategory = async () => {
+        const response = await fetch("/api/create_category", {method: "POST",
+            headers: {
+                "Content-Type": "application/json", // Specify content type
+            },
+            body: JSON.stringify({
+              firstParam: 'yessir',
+              secondParam: 'yourmom',
+            })})
+    }
     return (
         <>
             <button onClick={getData}>Hello</button>
@@ -41,6 +52,7 @@ const Transaction = () => {
                 </ul>
             )}
             <button onClick={getTransactionData}>Get transaction</button>
+            <button onClick={runCategory}>Categorize</button>
         </>
         )
     }

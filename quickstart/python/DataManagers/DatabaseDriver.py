@@ -4,7 +4,7 @@ from psycopg2.extensions import connection, cursor
 import os
 from dotenv import load_dotenv
 import sys
-from DataManagers import VenmoReader, Totals_DataDriver
+from DataManagers import VenmoReader, Totals_DataDriver, Categorizing
 
 
 load_dotenv()
@@ -27,8 +27,9 @@ CATEGORY_TABLE_CREATION_SQL = """
     CREATE TABLE IF NOT EXISTS Category (
         category_id SERIAL PRIMARY KEY,
         label VARCHAR(20) NOT NULL,
-        user_id BIGINT,
-        CONSTRAINT fk_user_category FOREIGN KEY(user_id) REFERENCES Users(user_id)
+        user_id BIGINT NOT NULL,
+        CONSTRAINT fk_user_category FOREIGN KEY(user_id) REFERENCES Users(user_id),
+        CONSTRAINT unique_user_label UNIQUE(user_id, label)
     )
 """
                 
@@ -77,7 +78,11 @@ def create_tables():
         
 def get_venmo_transaction(month: int, year: int):
     return VenmoReader.get_timed_transaction_data(year, month, "../../../cleaner_venmo_data")
-        
+
+def create_categories(user_id: int, labels: list[str]):
+    conn = this_connect()
+    Categorizing.create_category(conn, user_id, labels)
+    
 if __name__ == '__main__':
     # dir_path = "../../../clean_venmo_data"
     # dest_path = "../../../cleaner_venmo_data"

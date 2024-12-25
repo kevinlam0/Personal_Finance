@@ -1,3 +1,4 @@
+from psycopg2.extensions import connection
 # Rules table which matches keyword to a category defined by the user
 RULES_SQL = """
     CREATE TABLE IF NOT EXISTS Categorizing_Rule (
@@ -18,3 +19,12 @@ CATEGORY_MAPPING = """
     )
     """
     
+def create_category(conn: connection, user_id: int, labels: list[str]):
+    sql = f"""
+        INSERT INTO Category (user_id, label) VALUES 
+        ({user_id}, {labels[0]})
+        """
+    if len(labels) > 1:
+        for i in range(1, len(labels)):
+            sql += f", ({user_id}, {labels[i]})"
+    print(sql)

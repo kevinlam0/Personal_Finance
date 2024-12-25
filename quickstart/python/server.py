@@ -727,6 +727,13 @@ def cra_partner_insights():
     except plaid.ApiException as e:
         error_response = format_error(e)
         return jsonify(error_response)
+    
+    
+@app.route('/api/create_category', methods=['POST'])
+def create_category():
+    request_data = request.get_json()
+    DatabaseDriver.create_categories(36, ["tomatoes", "potatos", "Food"])
+    return jsonify({"hello": []})
 
 # Since this quickstart does not support webhooks, this function can be used to poll
 # an API that would otherwise be triggered by a webhook.
