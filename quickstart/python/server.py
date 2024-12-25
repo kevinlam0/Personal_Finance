@@ -209,7 +209,7 @@ def create_link_token_for_payment():
     except plaid.ApiException as e:
         return json.loads(e.body)
 
-
+# Step 1
 @app.route('/api/create_link_token', methods=['POST'])
 def create_link_token():
     global user_token
@@ -287,7 +287,7 @@ def create_user_token():
 # an API access_token
 # https://plaid.com/docs/#exchange-token-flow
 
-
+# Step 2
 @app.route('/api/set_access_token', methods=['POST'])
 def get_access_token():
     global access_token
@@ -341,7 +341,8 @@ def get_transactions():
         # Iterate through each page of new transaction updates for item
         while has_more:
             request = TransactionsSyncRequest(
-                access_token=access_token,
+                # access_token=access_token,
+                access_token = access_token
                 cursor=cursor,
             )
             response = client.transactions_sync(request).to_dict()
@@ -364,6 +365,9 @@ def get_transactions():
 
         # Return the 8 most recent transactions
         latest_transactions = sorted(added, key=lambda t: t['date'])[-8:]
+        print(type(latest_transactions[0]))
+        # for row in latest_transactions:
+        #     print(row)
         return jsonify({
             'latest_transactions': latest_transactions})
 

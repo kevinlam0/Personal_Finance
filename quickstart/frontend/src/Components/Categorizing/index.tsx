@@ -17,6 +17,11 @@ const Transaction = () => {
         const data = await response.json()
         setTransactions(data)
     }
+
+    const getTransactionData = async () => {
+        const response = await fetch("/api/transaction", {method: "GET"})
+        const data = await response.json()
+    }
     return (
         <>
             <button onClick={getData}>Hello</button>
@@ -35,6 +40,7 @@ const Transaction = () => {
                 ))}
                 </ul>
             )}
+            <button onClick={getTransactionData}>Get transaction</button>
         </>
         )
     }
