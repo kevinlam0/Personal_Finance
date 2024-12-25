@@ -1,3 +1,5 @@
+PLAID_CONFIDENCE_LEVELS = {"VERY HIGH", "HIGH", "MEDIUM", "LOW", "UNKNOWN"}
+
 class Transaction:
     t_id: str = None
     user_id: int = None
